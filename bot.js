@@ -3,20 +3,25 @@ const fs = require("fs");
 const client = new Discord.Client();
 const images = JSON.parse(fs.readFileSync("./pokemonrefs.json", "utf8"));
 
-var interval = 5000;
+var interval;
 var spamid = [];
 var infoid = [];
+var curr = 0;
+var testchannel = "436971996736258049";
 
 /*function step() {
-    var index;
-    for (index = 0; index < spamid.length; ++index) {
-        client.channels.get(spamid[index]).send('spamming here');
+    if (spamid.length > 0) {
+        if (curr >= spamid.lenght) {
+            curr = 0;
+        }
+        client.channels.get(spamid[curr]).send('spamming here');
+        curr = curr + 1;
     }
 };*/
 
 client.on('ready', () => {
     console.log('I am ready!');
-    //setTimeout(step, interval);
+    //timer = setTimeout(step, interval);
 });
 
 client.on('message', message => {
@@ -25,44 +30,48 @@ client.on('message', message => {
     	message.reply('pong');
     }
     
-    if (message.content === '$spam-mr') { 
+    if (message.content === '$spam') { 
         if (spamid.indexOf(message.channel.id) < 0) {
             spamid.push(message.channel.id);
         }
         message.channel.send('spam enabled');
         
-        setInterval(function() {
-            var index;
-            for (index = 0; index < spamid.length; ++index) {
-                client.channels.get(spamid[index]).send('spamming here');
-            }            
-        }, 5000);
+        clearInterval(interval);
+        interval = setInterval(function() {
+            if (spamid[curr] === undefined) {
+                curr = 0;
+            }
+            //client.channels.get(testchannel).send('spamming into ' + spamid[curr]);
+            client.channels.get(spamid[curr]).send('spamming here');
+            curr++;
+        }, 2000);
     }
     
-    if (message.content === '$stop-mr') {
+    if (message.content === '$stop') {
         var index = spamid.indexOf(message.channel.id);
         if (index > -1) {
           spamid.splice(index, 1);
         }
         message.channel.send('spam disabled');
         
-        if (spamid.length < 1) {
-            clearInterval(interval);
-        } else {
-            setInterval(function() {
-                var index;
-                for (index = 0; index < spamid.length; ++index) {
-                    client.channels.get(spamid[index]).send('spamming here');
-                }            
-            }, 5000);
+        clearInterval(interval);
+        if (spamid.length > 0) {
+            interval = setInterval(function() {
+                if (spamid[curr] === undefined) {
+                    curr = 0;
+                }
+                //client.channels.get(testchannel).send('spamming into ' + spamid[curr]);
+                client.channels.get(spamid[curr]).send('spamming here');
+                curr++;
+            }, 2000);
         }
     }
     
-    if (message.content === '$spamchannels-mr') { 
+    if (message.content === '$spamchannels') { 
         message.channel.send('spam channels: ' + spamid.join(' '));
     }
 
-    if (message.content === '$info-mr') {
+    if (message.content === '$info') {
         var index = infoid.indexOf(message.channel.id);
         if (index > -1) {
             infoid.splice(index, 1);
@@ -73,7 +82,7 @@ client.on('message', message => {
         }
     }
 
-    if (message.content === '$infochannels-mr') { 
+    if (message.content === '$infochannels') { 
         message.channel.send('spawns info channels: ' + infoid.join(' '));
     }
 

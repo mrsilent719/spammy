@@ -44,7 +44,7 @@ client.on('message', message => {
             //client.channels.get(testchannel).send('spamming into ' + spamid[curr]);
             client.channels.get(spamid[curr]).send('spamming here');
             curr++;
-        }, 2000);
+        }, 5000);
     }
     
     if (message.content === '$stop-mr') {
@@ -63,7 +63,7 @@ client.on('message', message => {
                 //client.channels.get(testchannel).send('spamming into ' + spamid[curr]);
                 client.channels.get(spamid[curr]).send('spamming here');
                 curr++;
-            }, 2000);
+            }, 5000);
         }
     }
     
